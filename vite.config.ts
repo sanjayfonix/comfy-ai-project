@@ -9,18 +9,13 @@ export default defineConfig({
     // Tailwind is not being actively used – do not remove them
     react(),
     tailwindcss(),
-    // Resolve figma:asset/* imports to a placeholder when running outside Figma Make
+    // Resolve figma:asset/* imports to actual files in src/assets/
     {
       name: 'figma-asset-placeholder',
       resolveId(id) {
         if (id.startsWith('figma:asset/')) {
-          return `\0${id}`;
-        }
-      },
-      load(id) {
-        if (id.startsWith('\0figma:asset/')) {
-          // Return a 1x1 transparent PNG data URI as placeholder
-          return `export default "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPj/HwADBwIAMCbHYQAAAABJRU5ErkJggg=="`;
+          const filename = id.replace('figma:asset/', '');
+          return path.resolve(__dirname, 'src/assets', filename);
         }
       },
     },
